@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BankAccountLogic;
-using BankAccountLogic.Creators;
+using BankAccountLogic.Factories;
 
 namespace BankAccountConsoleTest
 {
@@ -13,8 +13,8 @@ namespace BankAccountConsoleTest
         static void Main(string[] args)
         {
             Owner owner = OwnerService.CreateOwner("Chris", "Golovach", "Pass", "Date");           
-            int baseNumberAccount  = AccountService.CreateBankAccount(new BaseAccountCreator(1,2), owner.PassportNumber, 45);
-            int coldenNumberAccoun = AccountService.CreateBankAccount(new GoldenAccountCreator(2,3), owner.PassportNumber, 7);
+            int baseNumberAccount  = AccountService.CreateBankAccount(new BaseAccountFactory(1,2), owner.PassportNumber, 45);
+            int coldenNumberAccoun = AccountService.CreateBankAccount(new GoldenAccountFactory(2,3), owner.PassportNumber, 7);
           
             AccountService.PutMoney(baseNumberAccount, owner.PassportNumber, 47);
             AccountService.TakeMoney(baseNumberAccount, owner.PassportNumber, 7);
@@ -22,8 +22,8 @@ namespace BankAccountConsoleTest
             ///////////////////////////////////////////////////////
 
             Owner owner2 = OwnerService.CreateOwner("User2", "User2", "Pass2", "Date");
-            int baseNumberAccount2 = AccountService.CreateBankAccount(new BaseAccountCreator(2,7), owner2.PassportNumber, 75);
-            int coldenNumberAccoun2 = AccountService.CreateBankAccount(new GoldenAccountCreator(4,6), owner2.PassportNumber, 7);
+            int baseNumberAccount2 = AccountService.CreateBankAccount(new BaseAccountFactory(2,7), owner2.PassportNumber, 75);
+            int coldenNumberAccoun2 = AccountService.CreateBankAccount(new GoldenAccountFactory(4,6), owner2.PassportNumber, 7);
 
             AccountService.PutMoney(baseNumberAccount2, owner2.PassportNumber, 7);
             AccountService.TakeMoney(coldenNumberAccoun2, owner2.PassportNumber, 87);

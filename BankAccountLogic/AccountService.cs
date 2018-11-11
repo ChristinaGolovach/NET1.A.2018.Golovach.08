@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BankAccountLogic.Factories;
 
 namespace BankAccountLogic
 {
@@ -15,7 +16,7 @@ namespace BankAccountLogic
         /// <param name="passportNumber"></param>
         /// <param name="initialBalance"></param>
         /// <returns></returns>
-        public static int CreateBankAccount(AccountCreator creator, string passportNumber , decimal initialBalance = 0M)
+        public static int CreateBankAccount(AccountFactory creator, string passportNumber , decimal initialBalance = 0M)
         {
             CheckInputData(creator, passportNumber, initialBalance);
 
@@ -96,7 +97,7 @@ namespace BankAccountLogic
             return owner;
         }
 
-        private static void CheckInputData(AccountCreator creator, string passportNumber, decimal initialBalance)
+        private static void CheckInputData(AccountFactory creator, string passportNumber, decimal initialBalance)
         {
             CheckPassportNumber(passportNumber);
 

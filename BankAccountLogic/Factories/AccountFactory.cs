@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace BankAccountLogic
+namespace BankAccountLogic.Factories
 {
-    public abstract class AccountCreator
+    public abstract class AccountFactory
     {
         private int balanceCoefficient;
         private int depositCoefficient;
@@ -35,7 +35,7 @@ namespace BankAccountLogic
             }
         }
 
-        public AccountCreator(int balanceCoefficient, int depositCoefficient)
+        public AccountFactory(int balanceCoefficient, int depositCoefficient)
         {
             BalanceCoefficient = balanceCoefficient;
             DepositCoefficient = depositCoefficient;

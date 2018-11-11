@@ -1,7 +1,10 @@
 ﻿namespace BankAccountLogic
 {
     internal class BaseAccount : Account
-    {      
+    {   
+        //хранить здесь коэф. в каждом классе и не передавать из вне.
+        // но если их требуется изменить ?????
+
         public BaseAccount(int balanceCoefficient, int depositCoefficient, Owner owner, decimal initialBalance) 
             : base (balanceCoefficient, depositCoefficient, owner, initialBalance) { }
 

@@ -40,15 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AccountCreator.cs" />
+    <Compile Include="Factories\AccountFactory.cs" />
     <Compile Include="AccountService.cs" />
-    <Compile Include="Account.cs" />
+    <Compile Include="Accounts\Account.cs" />
     <Compile Include="Accounts\BaseAccount.cs" />
     <Compile Include="Accounts\GoldenAccount.cs" />
-    <Compile Include="Creators\BaseAccountCreator.cs" />
-    <Compile Include="Creators\GoldenAccountCreator.cs" />
-    <Compile Include="Creators\PlatinumAccountCreator.cs" />
-    <Compile Include="Creators\SilverAccountCreator.cs" />
+    <Compile Include="Factories\BaseAccountFactory.cs" />
+    <Compile Include="Factories\GoldenAccountFactory.cs" />
+    <Compile Include="Factories\PlatinumAccountFactory.cs" />
+    <Compile Include="Factories\SilverAccountFactory.cs" />
     <Compile Include="Owner.cs" />
     <Compile Include="Accounts\PlatinumAccount.cs" />
     <Compile Include="OwnerService.cs" />

@@ -101,6 +101,8 @@ namespace BankAccountLogic
             Balance = initialBalance;
         }
 
+        // стремно???
+        //Делать абстрактным  - шаблонный метод
         public virtual void PutMoney(decimal money)
         {
             Balance += money;
