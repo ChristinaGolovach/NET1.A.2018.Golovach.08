@@ -1,24 +1,28 @@
-﻿namespace BankAccountLogic
+﻿using BankAccountLogic.Accounts.Utils;
+
+namespace BankAccountLogic
 {
     internal class BaseAccount : Account
-    {   
+    {
         //хранить здесь коэф. в каждом классе и не передавать из вне.
         // но если их требуется изменить ?????
+        private const decimal BALANSECOST = 0.1M;
+        private const decimal AMAUNTCOST = 0.1M;
+        private const decimal ALLOWEDBALANCEMINUS = -100M;
 
-        public BaseAccount(int balanceCoefficient, int depositCoefficient, Owner owner, decimal initialBalance) 
-            : base (balanceCoefficient, depositCoefficient, owner, initialBalance) { }
-
-        
-        public override void PutMoney(decimal money)
+        public BaseAccount(string accountNumber, Owner owner, decimal initialBalance = 0M) : base (accountNumber, owner, initialBalance)
         {
-            base.PutMoney(money);
-            this.BonusPoints += BalanceCoefficient;
+
         }
 
-        public override void TakeMoney(decimal money)
+        protected override int CalculateBonusPoints(decimal money)
         {
-            base.TakeMoney(money);
-            this.BonusPoints -=  DepositCoefficient*3;
+            return AccountUtils.CalculateBonusPoints(BALANSECOST, Balance, AMAUNTCOST, money);
+        }
+
+        protected override bool IsAllowedToWithdraw(decimal money)
+        {
+            return AccountUtils.IsAllowedToWithdraw(ALLOWEDBALANCEMINUS, Balance, money);
         }
     }
 }

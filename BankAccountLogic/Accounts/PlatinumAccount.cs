@@ -1,21 +1,26 @@
-﻿namespace BankAccountLogic
+﻿using BankAccountLogic.Accounts.Utils;
+
+namespace BankAccountLogic
 {
     internal class PlatinumAccount : Account
     {
-        public PlatinumAccount(int balanceCoefficient, int depositCoefficient, Owner owner, decimal initialBalance) 
-            : base (balanceCoefficient, depositCoefficient, owner, initialBalance) { }
+        private const decimal BALANSECOST = 0.4M;
+        private const decimal AMAUNTCOST = 0.4M;
+        private const decimal ALLOWEDBALANCEMINUS = -400M;
 
-
-        public override void PutMoney(decimal money)
+        public PlatinumAccount(string accountNumber, Owner owner, decimal initialBalance = 0M) : base (accountNumber, owner, initialBalance)
         {
-            base.PutMoney(money);
-            this.BonusPoints += BalanceCoefficient * 4;
+
         }
 
-        public override void TakeMoney(decimal money)
+        protected override int CalculateBonusPoints(decimal money)
         {
-            base.TakeMoney(money);
-            this.BonusPoints -= DepositCoefficient;
+            return AccountUtils.CalculateBonusPoints(BALANSECOST, Balance, AMAUNTCOST, money);
+        }
+
+        protected override bool IsAllowedToWithdraw(decimal money)
+        {
+            return AccountUtils.IsAllowedToWithdraw(ALLOWEDBALANCEMINUS, Balance, money);
         }
     }
 }

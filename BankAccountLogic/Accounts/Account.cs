@@ -8,26 +8,25 @@ namespace BankAccountLogic
 {
     public abstract class Account
     {
-        private static int id;
-
-        private bool isOpened;
-        private int number;
+        private string number;
         private decimal balance;
         private int bonusPoints;
-        private int balanceCoefficient;
-        private int depositCoefficient;
+       // private int balanceCoefficient;
+       // private int depositCoefficient;
+        private bool isOpened;
         private Owner owner;
+
+        public string Number
+        {
+            get => number;
+            private set => number = value ?? throw new ArgumentNullException($"");
+        }
 
         public bool IsOponed
         {
             get => isOpened;
 
-            internal protected set => isOpened = value;
-        }
-
-        public int Number
-        {
-            get => number;
+            private set => isOpened = value;
         }
 
         public decimal Balance
@@ -36,10 +35,10 @@ namespace BankAccountLogic
 
             internal protected set
             {
-                if (value < 0)
-                {
-                    throw new ArgumentException($"The value for {nameof(Balance)} must be positive.");
-                }
+                //if (value < 0)
+                //{
+                //    throw new ArgumentException($"The value for {nameof(Balance)} must be positive.");
+                //}
                 balance = value;
             }
         }
@@ -48,7 +47,7 @@ namespace BankAccountLogic
         {
             get => bonusPoints;
 
-            internal protected set => bonusPoints = value;
+            private set => bonusPoints = value;
         }
 
         public Owner Owner
@@ -58,69 +57,49 @@ namespace BankAccountLogic
             internal protected set => owner = value;
         }
 
-        public int BalanceCoefficient
-        {
-            get => balanceCoefficient;
-
-            internal protected set
-            {
-                if (value <= 0)
-                {
-                    throw new ArithmeticException($"The value of {nameof(balanceCoefficient)} must be more than zero.");
-                }
-                balanceCoefficient = value;
-            }
-        }
-                    
-        public int DepositCoefficient
-        {
-            get => depositCoefficient;
-
-            internal protected set
-            {
-                if (value <= 0)
-                {
-                    throw new ArithmeticException($"The value of {nameof(depositCoefficient)} must be more than zero.");
-                }
-                depositCoefficient = value;
-            }
-        }
-
-        static Account()
-        {
-            id = 1;
-        }
-
-        public Account(int balanceCoefficient, int depositCoefficient, Owner owner, decimal initialBalance)
+        public Account(string accountNumber,  Owner owner, decimal initialBalance = 0M)
         {
             IsOponed = true;
-            number = id++;
-            BalanceCoefficient = balanceCoefficient;
-            DepositCoefficient = depositCoefficient;
+            Number = accountNumber;
             Owner = owner;
             Balance = initialBalance;
         }
 
-        // стремно???
-        //Делать абстрактным  - шаблонный метод
-        public virtual void PutMoney(decimal money)
+        public void Deposit(decimal money)
         {
+            if (money <= 0)
+            {
+                throw new ArgumentException($"The count of {nameof(money)} must be more than zero for this operation.");
+            }
+
             Balance += money;
+            BonusPoints -= CalculateBonusPoints(money);
         }
 
-        public virtual void TakeMoney(decimal money)
+        public void Withdraw(decimal money)
         {
-            if (Balance < money)
+            // добавить - Проверка на то, можно ли снять больше чем тек баланс
+            if (!IsAllowedToWithdraw(money))
             {
-                throw new ArgumentException($"The count of {nameof(money)} for withdrawing must be less than {Balance}.");
+                // верное ли исключение??
+                throw new InvalidOperationException();
             }
 
             Balance -= money;
+            BonusPoints -= CalculateBonusPoints(money);
         }
 
         public void CloseAccount()
         {
+            if (Balance < 0)
+            {
+                throw new InvalidOperationException($"The current balance {Balance}. You can not close account with negative balance.");
+            }
             IsOponed = false;
         }
+
+        protected abstract int CalculateBonusPoints(decimal money);
+
+        protected abstract bool IsAllowedToWithdraw(decimal money);
     }
 }
