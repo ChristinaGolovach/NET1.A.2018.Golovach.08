@@ -8,20 +8,25 @@ namespace BankAccountLogic
 {
     public class Owner
     {
-        private List<Account> accounts = new List<Account>();
+        //TODO добавить валидацию
+        private List<Account> accounts;
 
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string PassportNumber { get; set; }
-        public string DateOfBirth { get; set; }
+        public string Email { get; set; }
+
+        //TODO это нормально еслі напрямую у этого св-ва вызывать Add, или нужно спец метод доватить для киента.
+        //И кто должен проверять, что не добавили один и тот же счет для клиента два раза. Здесь или сервис.
         public List<Account> Accouns { get => accounts; }
 
-        public Owner(string firstName, string lastdName, string passportNumber, string dateOfBirth)
+        public Owner(string firstName, string lastdName, string passportNumber, string email)
         {
             FirstName = firstName;
             LastName = lastdName;
             PassportNumber = passportNumber;
-            DateOfBirth = dateOfBirth;
+            Email = email;
+            accounts = new List<Account>();
         }
 
     }

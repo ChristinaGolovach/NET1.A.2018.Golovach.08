@@ -67,7 +67,12 @@ namespace BankAccountLogic
         }
 
         public void Withdraw(decimal money)
-        {            
+        {
+            if (money <= 0)
+            {
+                throw new ArgumentException($"The count of {nameof(money)} must be more than zero for this operation.");
+            }
+
             if (!IsAllowedToWithdraw(money))
             {
                 // верное ли исключение??
