@@ -2,11 +2,9 @@
 {
     public class GoldenAccountFactory : AccountFactory
     {
-        public GoldenAccountFactory(int balanceCoefficient, int depositCoefficient) : base(balanceCoefficient, depositCoefficient) { }
-
-        internal override Account CreateAccount(Owner owner, decimal initialBalance)
+        internal override Account CreateAccount(string accountNumber, Owner owner, decimal initialBalance = 0M)
         {
-            return new GoldenAccount(BalanceCoefficient, DepositCoefficient, owner, initialBalance);
+            return new GoldenAccount(accountNumber, owner, initialBalance);
         }
     }
 }

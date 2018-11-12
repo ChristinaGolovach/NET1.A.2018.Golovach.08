@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Accounts\Utils\AccountUtils.cs" />
     <Compile Include="Factories\AccountFactory.cs" />
     <Compile Include="AccountService.cs" />
     <Compile Include="Accounts\Account.cs" />
@@ -49,6 +50,8 @@
     <Compile Include="Factories\GoldenAccountFactory.cs" />
     <Compile Include="Factories\PlatinumAccountFactory.cs" />
     <Compile Include="Factories\SilverAccountFactory.cs" />
+    <Compile Include="NumberGenerator\AccountNumberGenerator.cs" />
+    <Compile Include="NumberGenerator\INumberGenerator.cs" />
     <Compile Include="Owner.cs" />
     <Compile Include="Accounts\PlatinumAccount.cs" />
     <Compile Include="OwnerService.cs" />

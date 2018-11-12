@@ -2,11 +2,9 @@
 {
     public class SilverAccountFactory : AccountFactory
     {
-        public SilverAccountFactory(int balanceCoefficient, int depositCoefficient) : base(balanceCoefficient, depositCoefficient) { }
-
-        internal override Account CreateAccount(Owner owner, decimal initialBalance)
+        internal override Account CreateAccount(string accountNumber, Owner owner, decimal initialBalance = 0M)
         {
-            return new SilverAccount(BalanceCoefficient, DepositCoefficient, owner, initialBalance);
+            return new SilverAccount(accountNumber, owner, initialBalance);
         }
     }
 }

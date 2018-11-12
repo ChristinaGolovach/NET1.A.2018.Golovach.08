@@ -11,36 +11,19 @@ namespace BankAccountLogic
         private string number;
         private decimal balance;
         private int bonusPoints;
-       // private int balanceCoefficient;
-       // private int depositCoefficient;
         private bool isOpened;
         private Owner owner;
 
         public string Number
         {
             get => number;
-            private set => number = value ?? throw new ArgumentNullException($"");
-        }
-
-        public bool IsOponed
-        {
-            get => isOpened;
-
-            private set => isOpened = value;
+            private set => number = value ?? throw new ArgumentNullException($"The {nameof(number)} can not be null.");
         }
 
         public decimal Balance
         {
             get => balance;
-
-            internal protected set
-            {
-                //if (value < 0)
-                //{
-                //    throw new ArgumentException($"The value for {nameof(Balance)} must be positive.");
-                //}
-                balance = value;
-            }
+            private set => balance = value;
         }
 
         public int BonusPoints
@@ -50,11 +33,18 @@ namespace BankAccountLogic
             private set => bonusPoints = value;
         }
 
+        public bool IsOponed
+        {
+            get => isOpened;
+
+            private set => isOpened = value;
+        }
+
         public Owner Owner
         {
             get => owner;
 
-            internal protected set => owner = value;
+            internal protected set => owner = value ?? throw new ArgumentNullException($"The {nameof(owner)} can not be null.");
         }
 
         public Account(string accountNumber,  Owner owner, decimal initialBalance = 0M)
@@ -77,8 +67,7 @@ namespace BankAccountLogic
         }
 
         public void Withdraw(decimal money)
-        {
-            // добавить - Проверка на то, можно ли снять больше чем тек баланс
+        {            
             if (!IsAllowedToWithdraw(money))
             {
                 // верное ли исключение??
@@ -93,8 +82,9 @@ namespace BankAccountLogic
         {
             if (Balance < 0)
             {
-                throw new InvalidOperationException($"The current balance {Balance}. You can not close account with negative balance.");
+                throw new InvalidOperationException($"The current balance is {Balance}. You can not close account with negative balance.");
             }
+
             IsOponed = false;
         }
 
