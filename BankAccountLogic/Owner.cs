@@ -16,9 +16,10 @@ namespace BankAccountLogic
         public string PassportNumber { get; set; }
         public string Email { get; set; }
 
-        //TODO это нормально еслі напрямую у этого св-ва вызывать Add, или нужно спец метод доватить для киента.
+        //TODO (when use LIST) это нормально еслі напрямую у этого св-ва вызывать Add, или нужно спец метод доватить для киента.
         //И кто должен проверять, что не добавили один и тот же счет для клиента два раза. Здесь или сервис.
-        public List<Account> Accouns { get => accounts; }
+
+        public IEnumerable<Account> Accouns { get => accounts; }
 
         public Owner(string firstName, string lastdName, string passportNumber, string email)
         {

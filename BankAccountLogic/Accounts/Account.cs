@@ -8,6 +8,7 @@ namespace BankAccountLogic
 {
     public abstract class Account
     {
+        //private readonly string number;
         private string number;
         private decimal balance;
         private int bonusPoints;
