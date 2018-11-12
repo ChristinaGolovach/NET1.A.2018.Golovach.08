@@ -68,6 +68,7 @@ namespace BankAccountLogic
 
         public void Withdraw(decimal money)
         {
+            //TODO это здесь проверять или сервис должен валидацию делать или там и здесь?
             if (money <= 0)
             {
                 throw new ArgumentException($"The count of {nameof(money)} must be more than zero for this operation.");

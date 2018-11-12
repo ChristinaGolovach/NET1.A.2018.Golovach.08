@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BankAccountLogic.NumberGenerator
+﻿namespace BankAccountLogic.NumberGenerator
 {
-    interface INumberGenerator
+    interface INumberGenerator<out T>
     {
-        string GenerateNumber(int numberLength);
+        T GenerateNumber(int numberLength);
     }
 }
