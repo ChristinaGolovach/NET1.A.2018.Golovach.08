@@ -1,6 +1,6 @@
 ﻿namespace BankAccountLogic.Repositories.Interfaces
 {
-    interface IOwnerRepository : IRepository <Owner>
+    public interface IOwnerRepository : IRepository <Owner>
     {
         Owner GetByPassportNumber(string passportNUmber);
     }

@@ -15,14 +15,14 @@ namespace BankAccountLogic
 
         }
 
-        protected override int CalculateBonusPoints(decimal money)
+        protected override int CalculateBonusPoints(decimal amount)
         {
-            return AccountUtils.CalculateBonusPoints(BALANSECOST, Balance, AMAUNTCOST, money);
+            return AccountUtils.CalculateBonusPoints(BALANSECOST, Balance, AMAUNTCOST, amount);
         }
 
-        protected override bool IsAllowedToWithdraw(decimal money)
+        protected override bool IsAllowedToWithdraw(decimal amount)
         {
-            return AccountUtils.IsAllowedToWithdraw(ALLOWEDBALANCEMINUS, Balance, money);
+            return AccountUtils.IsAllowedToWithdraw(ALLOWEDBALANCEMINUS, Balance, amount);
         }
     }
 }

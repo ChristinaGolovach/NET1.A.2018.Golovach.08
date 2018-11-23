@@ -1,7 +1,7 @@
 ﻿namespace BankAccountLogic.NumberGenerator
 {
-    interface INumberGenerator<out T>
+    public interface INumberGenerator<out T>
     {
-        T GenerateNumber(int numberLength);
+        T GenerateNumber(int numberLength = 10);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace BankAccountLogic.Repositories.Interfaces
 {
-    interface IRepository<T>
+    public interface IRepository<T>
     {
         void Add(T t);
         void Delete(T t);

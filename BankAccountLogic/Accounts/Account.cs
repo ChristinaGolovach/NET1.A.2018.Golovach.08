@@ -56,33 +56,33 @@ namespace BankAccountLogic
             Balance = initialBalance;
         }
 
-        public void Deposit(decimal money)
+        public void Deposit(decimal amount)
         {
-            if (money <= 0)
+            if (amount <= 0)
             {
-                throw new ArgumentException($"The count of {nameof(money)} must be more than zero for this operation.");
+                throw new ArgumentException($"The count of {nameof(amount)} must be more than zero for this operation.");
             }
 
-            Balance += money;
-            BonusPoints -= CalculateBonusPoints(money);
+            Balance += amount;
+            BonusPoints -= CalculateBonusPoints(amount);
         }
 
-        public void Withdraw(decimal money)
+        public void Withdraw(decimal amount)
         {
-            //TODO это здесь проверять или сервис должен валидацию делать или там и здесь?
-            if (money <= 0)
+            //TODO это здесь проверять или сервис должен валидацию делать или там и здесь? - і там і здесь
+            if (amount <= 0)
             {
-                throw new ArgumentException($"The count of {nameof(money)} must be more than zero for this operation.");
+                throw new ArgumentException($"The count of {nameof(amount)} must be more than zero for this operation.");
             }
 
-            if (!IsAllowedToWithdraw(money))
+            if (!IsAllowedToWithdraw(amount))
             {
                 // верное ли исключение??
                 throw new InvalidOperationException();
             }
 
-            Balance -= money;
-            BonusPoints -= CalculateBonusPoints(money);
+            Balance -= amount;
+            BonusPoints -= CalculateBonusPoints(amount);
         }
 
         public void CloseAccount()
@@ -95,8 +95,8 @@ namespace BankAccountLogic
             IsOponed = false;
         }
 
-        protected abstract int CalculateBonusPoints(decimal money);
+        protected abstract int CalculateBonusPoints(decimal amount);
 
-        protected abstract bool IsAllowedToWithdraw(decimal money);
+        protected abstract bool IsAllowedToWithdraw(decimal amount);
     }
 }

@@ -6,29 +6,67 @@ using System.Threading.Tasks;
 
 namespace BankAccountLogic
 {
-    public class Owner
+    public class Owner : IEquatable<Owner>
     {
         //TODO добавить валидацию
-        private List<Account> accounts;
-
+        // field IEnumerable
+        private List<Account> accounts;        
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string PassportNumber { get; set; }
         public string Email { get; set; }
 
-        //TODO (when use LIST) это нормально еслі напрямую у этого св-ва вызывать Add, или нужно спец метод доватить для киента.
-        //И кто должен проверять, что не добавили один и тот же счет для клиента два раза. Здесь или сервис.
+        public IEnumerable<Account> Accounts { get => accounts; }
 
-        public IEnumerable<Account> Accouns { get => accounts; }
-
-        public Owner(string firstName, string lastdName, string passportNumber, string email)
+        public Owner(string passportNumber, string firstName, string lastName,string email)
         {
             FirstName = firstName;
-            LastName = lastdName;
+            LastName = lastName;
             PassportNumber = passportNumber;
             Email = email;
             accounts = new List<Account>();
         }
 
+        public void OpenAccount(Account account)
+        {
+            accounts.Add(account);
+        }
+
+        public bool Equals(Owner otherOwner)
+        {
+            if (ReferenceEquals(otherOwner, null))
+            {
+                throw new ArgumentNullException($"The {nameof(otherOwner)} can not be null.");
+            }
+
+            return string.Equals(PassportNumber, otherOwner.PassportNumber, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public override bool Equals(object otherOwner)
+        {
+            if (ReferenceEquals(otherOwner, null))
+            {
+                throw new ArgumentNullException($"The {nameof(otherOwner)} can not be null.");
+            }
+
+            if (otherOwner.GetType() != this.GetType())
+            {
+                return false;
+            }
+
+            return Equals(otherOwner as Owner);
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 19;
+
+            for(int i = 1; i < PassportNumber.Length; i++)
+            {
+                hash = hash << 1 + PassportNumber[i].GetHashCode();
+            }
+
+            return hash;
+        }
     }
 }

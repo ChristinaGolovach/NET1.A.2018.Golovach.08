@@ -4,11 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BankAccountLogic.Factories;
+using BankAccountLogic.NumberGenerator;
+using BankAccountLogic.Repositories.Interfaces;
 
 namespace BankAccountLogic
 {
-    public static class AccountService
+    public class AccountService
     {
+        private OwnerService ownerService;
+        private INumberGenerator<string> numberGenerator;
+        private IAccountRepository accountRepository;
+
+        public AccountService(IAccountRepository accountRepository, OwnerService ownerService, INumberGenerator<string> numberGenerator)
+        {
+            this.accountRepository = accountRepository;
+            this.ownerService = ownerService;
+            this.numberGenerator = numberGenerator;            
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -16,14 +29,26 @@ namespace BankAccountLogic
         /// <param name="passportNumber"></param>
         /// <param name="initialBalance"></param>
         /// <returns></returns>
-        public static int CreateBankAccount(AccountFactory creator, string passportNumber , decimal initialBalance = 0M)
+        public string CreateAccount(AccountFactory accountCreator, string passportNumber , decimal initialBalance = 0M)
         {
-            CheckInputData(creator, passportNumber, initialBalance);
+            CheckInputData(accountCreator, passportNumber, initialBalance);
 
-            Owner owner = FindOwner(passportNumber);
+            //TODO Если такого пользователя не существует
+            Owner owner = ownerService.FindByPassport(passportNumber);
 
-            Account account = creator.CreateAccount(owner, initialBalance);
-            owner.Accouns.Add(account);
+            Account account = CreateAccountCore(accountCreator, owner, initialBalance);
+
+            return account.Number;
+        }
+
+        public string CreateAccount(AccountFactory accountCreator, string passportNumber, string firstName, string lastName, string email, decimal initialBalance = 0M)
+        {
+            //TODO
+            //CheckInputData()
+
+            Owner owner = ownerService.CreateOwner(passportNumber, firstName, lastName, email);
+
+            Account account = CreateAccountCore(accountCreator, owner, initialBalance);
 
             return account.Number;
         }
@@ -33,71 +58,76 @@ namespace BankAccountLogic
         /// </summary>
         /// <param name="numberAccount"></param>
         /// <param name="passportNumber"></param>
-        public static void CloseBankAccount(int numberAccount, string passportNumber)
+        public void CloseAccount(string accountNumber)
         {
-            CheckInputData(numberAccount, passportNumber);
+            //CheckInputData(numberAccount); 
 
-            Owner owner = FindOwner(passportNumber);
+            Account account = accountRepository.GetByNumber(accountNumber);
 
-            Account account = FindAccountByNumber(numberAccount, owner);
+            account = account ?? throw new ArgumentException($"Account with number {accountNumber} does not exist.");
+
+            //TODO TRY - CATCH
             account.CloseAccount();           
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="numberAccount"></param>
-        /// <param name="passportNumber"></param>
-        /// <param name="money"></param>
-        public static void PutMoney(int numberAccount, string passportNumber, decimal money)
+
+        public void PutMoney(string accountNumber, decimal amount)
         {
-            Owner owner = OwnerService.FindOwnerByPassport(passportNumber);
-            Account account = FindAccountByNumber(numberAccount, owner);
-            account.PutMoney(money);
+            Account account = accountRepository.GetByNumber(accountNumber);
+
+            account.Deposit(amount);
+            
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="numberAccount"></param>
-        /// <param name="passportNumber"></param>
-        /// <param name="money"></param>
-        public static void TakeMoney(int numberAccount, string passportNumber, decimal money)
+
+
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <param name="numberAccount"></param>
+        ///// <param name="passportNumber"></param>
+        ///// <param name="money"></param>
+        //public void TakeMoney(int numberAccount, string passportNumber, decimal money)
+        //{
+        //    Owner owner = OwnerService.FindOwnerByPassport(passportNumber);
+        //    Account account = FindAccountByNumber(numberAccount, owner); 
+        //    account.TakeMoney(money);
+        //}
+
+
+        private Account CreateAccountCore(AccountFactory accountCreator, Owner owner, decimal initialBalance)
         {
-            Owner owner = OwnerService.FindOwnerByPassport(passportNumber);
-            Account account = FindAccountByNumber(numberAccount, owner);
-            account.TakeMoney(money);
+            string accountNumber = ReciveAccountNumber();
+
+            Account account = accountCreator.CreateAccount(accountNumber, owner, initialBalance);
+
+            accountRepository.Add(account);
+
+            ownerService.OpenNewAccount(owner, account);
+
+            return account;
         }
 
-        private static Account FindAccountByNumber(int number, Owner owner)
+        private string ReciveAccountNumber()
         {
-            //Account account =  owner.Accouns.Find(a => a.Number == number);
+            string accountNumber = numberGenerator.GenerateNumber();
 
-            Account foundAccount = null;
-            foreach (var account in owner.Accouns)
+            while (!IsExistsAccountNumber(accountNumber))
             {
-                if (account.Number == number)
-                {
-                    return account;
-                }
+                accountNumber = numberGenerator.GenerateNumber();
             }
 
-            return foundAccount;            
+            return accountNumber;
         }
 
-        private static Owner FindOwner(string passportNumber)
+        private bool IsExistsAccountNumber(string accountNumber)
         {
-            Owner owner = OwnerService.FindOwnerByPassport(passportNumber);
+            Account account = accountRepository.GetByNumber(accountNumber);
 
-            if (ReferenceEquals(owner, null))
-            {
-                throw new ArgumentException($"The owner with passport number {passportNumber} does not exist.");
-            }
-
-            return owner;
+            return ReferenceEquals(account, null);
         }
 
-        private static void CheckInputData(AccountFactory creator, string passportNumber, decimal initialBalance)
+        private void CheckInputData(AccountFactory creator, string passportNumber, decimal initialBalance)
         {
             CheckPassportNumber(passportNumber);
 
@@ -112,7 +142,7 @@ namespace BankAccountLogic
             }
         }
 
-        private static void CheckInputData(int numberAccount, string passportNumber)
+        private  void CheckInputData(int numberAccount, string passportNumber)
         {
             if (numberAccount <= 0)
             {
@@ -122,7 +152,7 @@ namespace BankAccountLogic
             CheckPassportNumber(passportNumber);
         }
 
-        private static void CheckPassportNumber(string passportNumber)
+        private  void CheckPassportNumber(string passportNumber)
         {
             if (ReferenceEquals(passportNumber, null))
             {

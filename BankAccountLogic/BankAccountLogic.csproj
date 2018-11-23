@@ -57,6 +57,12 @@
     <Compile Include="OwnerService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Accounts\SilverAccount.cs" />
+    <Compile Include="Repositories\Fakes\AccountRepository.cs" />
+    <Compile Include="Repositories\Fakes\OwnerRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IAccountRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IOwnerRepository.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

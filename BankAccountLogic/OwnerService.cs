@@ -1,50 +1,85 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using BankAccountLogic.Repositories.Interfaces;
 
 namespace BankAccountLogic
 {
-    public static class OwnerService
+    public class OwnerService
     {
-        private static List<Owner> owners;
+        private IEnumerable<Owner> owners;
+        private IOwnerRepository ownerRepository;
 
-        public static List<Owner> Owners
+        public IEnumerable<Owner> Owners
         {
             get => owners;
         }
 
-        static OwnerService()
+        public OwnerService(IOwnerRepository ownerRepository)
         {
-            owners = new List<Owner> { };
+            this.ownerRepository = ownerRepository;
+            owners = ownerRepository.GetAll();
         }
 
-        public static Owner CreateOwner(string firstName, string lastdName, string passportNumber, string dateOfBirth)
+        public Owner CreateOwner(string passportNumber, string firstName, string lastName, string email)
         {
-            Owner owner  = new Owner(firstName, lastdName, passportNumber, dateOfBirth);
-            Owners.Add(owner);
+            string upperPassportNumber = passportNumber.ToUpper();
+
+            Owner existingOwner = ownerRepository.GetByPassportNumber(upperPassportNumber);
+
+            if (!ReferenceEquals(existingOwner, null))
+            {
+                if (existingOwner.FirstName.Equals(firstName, StringComparison.CurrentCultureIgnoreCase) && (existingOwner.LastName.Equals(lastName, StringComparison.CurrentCultureIgnoreCase))) 
+                {
+                    return existingOwner;
+                }
+
+                throw new InvalidOperationException($"The owner with passport number {passportNumber} already exists.");
+            }
+
+            Owner owner = new Owner(upperPassportNumber, firstName, lastName, email);
+
+            ownerRepository.Add(owner);
+
             return owner;
         }
 
-        public static List<Account> TakeOwnerAccounts(string passportNumber)
+        public void AddNewAccount(Owner owner, Account account)
         {
-            Owner owner = FindOwnerByPassport(passportNumber);
-            return owner.Accouns;
+            // TODO ASK это можно напрямую так, ілі создать в репозіторіі перегруженную версію Update, и уже в методе обновления вызывать OpenAccount
+            owner.OpenAccount(account);
         }
 
-        public static Owner FindOwnerByPassport(string passportNumber)
+        public Owner FindByPassport(string passportNumber)
         {
-            //Owner owner = Owners.Find(o => o.PassportNumber == passportNumber);
+            string  upperPassportNumber = passportNumber.ToUpper();
 
-            Owner existingOwner = null;
-
-            foreach (var owner in Owners)
-            {
-                if (owner.PassportNumber == passportNumber)
-                {
-                    return owner;
-                }
-            }
-
-            return existingOwner;
+            return ownerRepository.GetByPassportNumber(upperPassportNumber);
         }
+
+       // public 
+        
+        //public static IEnumerable<Account> TakeOwnerAccounts(string passportNumber)
+        //{
+        //    Owner owner = FindOwnerByPassport(passportNumber);
+        //    return owner.Accouns;
+        //}
+
+        //public static Owner FindOwnerByPassport(string passportNumber)
+        //{
+        //    //Owner owner = Owners.Find(o => o.PassportNumber == passportNumber);
+
+        //    Owner existingOwner = null;
+
+        //    foreach (var owner in Owners)
+        //    {
+        //        if (owner.PassportNumber == passportNumber)
+        //        {
+        //            return owner;
+        //        }
+        //    }
+
+        //    return existingOwner;
+        //}
 
     }
 }
