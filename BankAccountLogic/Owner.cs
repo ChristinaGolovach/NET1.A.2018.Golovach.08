@@ -61,7 +61,7 @@ namespace BankAccountLogic
         {
             int hash = 19;
 
-            for(int i = 1; i < PassportNumber.Length; i++)
+            for (int i = 1; i < PassportNumber.Length; i++)
             {
                 hash = hash << 1 + PassportNumber[i].GetHashCode();
             }

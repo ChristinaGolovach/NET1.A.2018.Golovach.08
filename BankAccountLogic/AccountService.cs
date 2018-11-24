@@ -38,6 +38,8 @@ namespace BankAccountLogic
 
             Account account = CreateAccountCore(accountCreator, owner, initialBalance);
 
+            account.Operation += CommitOperation;
+
             return account.Number;
         }
 
@@ -49,6 +51,8 @@ namespace BankAccountLogic
             Owner owner = ownerService.CreateOwner(passportNumber, firstName, lastName, email);
 
             Account account = CreateAccountCore(accountCreator, owner, initialBalance);
+
+            account.Operation += CommitOperation;
 
             return account.Number;
         }
@@ -70,30 +74,59 @@ namespace BankAccountLogic
             account.CloseAccount();           
         }
 
-
         public void PutMoney(string accountNumber, decimal amount)
         {
-            Account account = accountRepository.GetByNumber(accountNumber);
+            Account account = GetAccountForOperation(accountNumber);            
 
-            account.Deposit(amount);
+            AccountOperation(amount, account.Deposit);
+        }
+
+        private void CommitOperation(object sender, AccauntEventArgs e)
+        {
             
         }
 
+        public void TakeMoney(string accountNumber, decimal amount)
+        {
+            Account account = GetAccountForOperation(accountNumber);
 
+            AccountOperation(amount, account.Withdraw);
+        }
 
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        ///// <param name="numberAccount"></param>
-        ///// <param name="passportNumber"></param>
-        ///// <param name="money"></param>
-        //public void TakeMoney(int numberAccount, string passportNumber, decimal money)
-        //{
-        //    Owner owner = OwnerService.FindOwnerByPassport(passportNumber);
-        //    Account account = FindAccountByNumber(numberAccount, owner); 
-        //    account.TakeMoney(money);
-        //}
+        public void Transfer(string fromAccountNumber, string toAccountNumber, decimal amount)
+        {
+            TakeMoney(fromAccountNumber, amount);
 
+            PutMoney(toAccountNumber, amount);
+        }
+
+        public void ShowAccountInfo(string accountNumber)
+        {
+
+        }
+
+        public void ShowAllOwnerAccount(string passportNumber)
+        {
+
+        }
+
+        private void AccountOperation(decimal amount, Action<decimal> operation)
+        {
+            operation(amount);
+        }
+
+        private Account GetAccountForOperation(string accountNumber)
+        {
+            Account account = accountRepository.GetByNumber(accountNumber);
+
+            //TODO где это проверять. здесь или в аккаунте.
+            if (!account.IsOponed)
+            {
+                throw new InvalidOperationException();
+            }
+
+            return account;
+        }
 
         private Account CreateAccountCore(AccountFactory accountCreator, Owner owner, decimal initialBalance)
         {

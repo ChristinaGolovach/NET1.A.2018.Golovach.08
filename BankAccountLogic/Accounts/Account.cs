@@ -8,12 +8,13 @@ namespace BankAccountLogic
 {
     public abstract class Account
     {
-        //private readonly string number;
         private string number;
         private decimal balance;
         private int bonusPoints;
         private bool isOpened;
         private Owner owner;
+
+        public event EventHandler<AccauntEventArgs> Operation = delegate { }; 
 
         public string Number
         {
@@ -60,29 +61,35 @@ namespace BankAccountLogic
         {
             if (amount <= 0)
             {
+                GenerateEventInfo(nameof(Deposit), "Error.");
+
                 throw new ArgumentException($"The count of {nameof(amount)} must be more than zero for this operation.");
             }
 
             Balance += amount;
-            BonusPoints -= CalculateBonusPoints(amount);
+            BonusPoints += CalculateBonusPoints(amount);
+            GenerateEventInfo(nameof(Deposit), "Done");
         }
 
         public void Withdraw(decimal amount)
-        {
-            //TODO это здесь проверять или сервис должен валидацию делать или там и здесь? - і там і здесь
+        {           
             if (amount <= 0)
             {
+                GenerateEventInfo(nameof(Withdraw), "Error.");
+
                 throw new ArgumentException($"The count of {nameof(amount)} must be more than zero for this operation.");
             }
 
             if (!IsAllowedToWithdraw(amount))
             {
                 // верное ли исключение??
+                GenerateEventInfo(nameof(Withdraw), "Not allowed.");
                 throw new InvalidOperationException();
             }
 
             Balance -= amount;
             BonusPoints -= CalculateBonusPoints(amount);
+            GenerateEventInfo(nameof(Withdraw), "Done.");
         }
 
         public void CloseAccount()
@@ -98,5 +105,43 @@ namespace BankAccountLogic
         protected abstract int CalculateBonusPoints(decimal amount);
 
         protected abstract bool IsAllowedToWithdraw(decimal amount);
+
+        protected void OnOperation(AccauntEventArgs accauntEventArgs)
+        {
+            if (ReferenceEquals(accauntEventArgs, null))
+            {
+                throw new ArgumentNullException($"The {nameof(accauntEventArgs)} can not be null.");
+            }
+
+            Operation?.Invoke(this, accauntEventArgs);
+        }
+
+        private void GenerateEventInfo(string nameOperation, string status)
+        {
+            string message = $"The operation {nameOperation} has done with status {status}.";
+            AccauntEventArgs accauntEventArgs = new AccauntEventArgs(number, balance, owner.PassportNumber, message);
+            OnOperation(accauntEventArgs);
+        }
+    }
+
+    public class AccauntEventArgs : EventArgs
+    {
+        private string accountNumber;
+        private decimal balance;
+        private string message;
+        private string passportNumber;
+
+        public string AccountNumber { get => accountNumber; }
+        public decimal Balance { get => balance; }
+        public string Message { get => message;  }
+        public string PassportNumber { get => passportNumber; }
+
+        public AccauntEventArgs(string accountNumber, decimal balance, string passportNumber, string message)
+        {
+            this.accountNumber = accountNumber;
+            this.balance = balance;
+            this.message = message;
+            this.passportNumber = passportNumber;
+        }
     }
 }

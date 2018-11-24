@@ -17,10 +17,15 @@ namespace BankAccountConsoleTest
             OwnerService ownerService = new OwnerService(new OwnerRepository());
             AccountService accountService = new AccountService(new AccountRepository(), ownerService, new AccountNumberGenerator());
 
-            string baseNumberAccount = accountService.CreateAccount(new BaseAccountFactory(), "KB147147", "UserFirstName", "UserLastName", "email", 147);
-            string baseNumberAccount2 = accountService.CreateAccount(new BaseAccountFactory(), "Kb147147", 17777);
+            string baseNumberAccount1 = accountService.CreateAccount(new BaseAccountFactory(), "Kb147147", "UserFirstName", "UserLastName", "email", 10);
+            string baseNumberAccount2 = accountService.CreateAccount(new BaseAccountFactory(), "KB147147", 7);
 
-            accountService.CloseAccount(baseNumberAccount);
+           // accountService.CloseAccount(baseNumberAccount1);
+
+            accountService.PutMoney(baseNumberAccount1, 12);
+            accountService.PutMoney(baseNumberAccount2, 10);
+          //  accountService.TakeMoney(baseNumberAccount2, 4);
+        //    accountService.Transfer(baseNumberAccount1, baseNumberAccount2, 3);
 
         }
     }
