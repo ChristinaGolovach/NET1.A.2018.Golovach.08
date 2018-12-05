@@ -55,6 +55,7 @@ namespace BankAccountLogic.Repositories.Fakes
             return owners;
         }
 
+        //TODO изменить сигнатуру метода, сделать чтобы можно было указывать как сравнивать номера паспорта
         public Owner GetByPassportNumber(string passportNumber)
         {
             if (ReferenceEquals(passportNumber, null))

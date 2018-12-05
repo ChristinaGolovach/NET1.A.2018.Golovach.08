@@ -36,11 +36,7 @@ namespace BankAccountLogic
             //TODO Если такого пользователя не существует
             Owner owner = ownerService.FindByPassport(passportNumber);
 
-            Account account = CreateAccountCore(accountCreator, owner, initialBalance);
-
-            account.Operation += CommitOperation;
-
-            return account.Number;
+            return CreateAccount(accountCreator, owner, initialBalance);
         }
 
         public string CreateAccount(AccountFactory accountCreator, string passportNumber, string firstName, string lastName, string email, decimal initialBalance = 0M)
@@ -50,11 +46,7 @@ namespace BankAccountLogic
 
             Owner owner = ownerService.CreateOwner(passportNumber, firstName, lastName, email);
 
-            Account account = CreateAccountCore(accountCreator, owner, initialBalance);
-
-            account.Operation += CommitOperation;
-
-            return account.Number;
+            return CreateAccount(accountCreator, owner, initialBalance);
         }
 
         /// <summary>
@@ -76,24 +68,19 @@ namespace BankAccountLogic
 
         public void PutMoney(string accountNumber, decimal amount)
         {
-            Account account = GetAccountForOperation(accountNumber);            
+            Account account = GetAccountForOperation(accountNumber);
 
-            AccountOperation(amount, account.Deposit);
-        }
-
-        private void CommitOperation(object sender, AccauntEventArgs e)
-        {
-            
+            ExecuteAccountOperation(amount, account.Deposit);
         }
 
         public void TakeMoney(string accountNumber, decimal amount)
         {
             Account account = GetAccountForOperation(accountNumber);
 
-            AccountOperation(amount, account.Withdraw);
+            ExecuteAccountOperation(amount, account.Withdraw);
         }
 
-        public void Transfer(string fromAccountNumber, string toAccountNumber, decimal amount)
+        public void TransferMoney(string fromAccountNumber, string toAccountNumber, decimal amount)
         {
             TakeMoney(fromAccountNumber, amount);
 
@@ -110,7 +97,7 @@ namespace BankAccountLogic
 
         }
 
-        private void AccountOperation(decimal amount, Action<decimal> operation)
+        private void ExecuteAccountOperation(decimal amount, Action<decimal> operation)
         {
             operation(amount);
         }
@@ -128,6 +115,15 @@ namespace BankAccountLogic
             return account;
         }
 
+        private string CreateAccount(AccountFactory accountCreator, Owner owner, decimal initialBalance)
+        {
+            Account account = CreateAccountCore(accountCreator, owner, initialBalance);
+
+            account.Operation += CommitOperation;
+
+            return account.Number;
+        }
+
         private Account CreateAccountCore(AccountFactory accountCreator, Owner owner, decimal initialBalance)
         {
             string accountNumber = ReciveAccountNumber();
@@ -139,6 +135,12 @@ namespace BankAccountLogic
             ownerService.OpenNewAccount(owner, account);
 
             return account;
+        }
+
+        //TODO
+        private void CommitOperation(object sender, AccauntEventArgs e)
+        {
+
         }
 
         private string ReciveAccountNumber()
